@@ -1,15 +1,20 @@
 import asyncio
+from random import randint
 
-from aiohttp import web
 from aiozmq import rpc
 
-async def hello(request):
-    client = await rpc.connect_rpc(connect='tcp://worker:5555')
+WORKER_ID = randint(1, 100)
 
-    sentence = await client.call.make_a_sentence('Hello', 'world')
-    return web.Response(text=sentence)
+class WorkerHandler(rpc.AttrHandler):
+    @rpc.method
+    def make_a_sentence(self, greeting: str, subject: str) -> str:
+        return '[Worker {} says]: {}, {}!'.format(WORKER_ID, greeting, subject)
 
 
-app = web.Application()
-app.router.add_route('GET', '/', hello)
-web.run_app(app)
+async def worker():
+    await rpc.serve_rpc(WorkerHandler(), bind='tcp://0.0.0.0:5555')
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(worker())
+    loop.run_forever()
