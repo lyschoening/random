@@ -1,15 +1,15 @@
 import asyncio
-import random
+
 from aiohttp import web
+from aiozmq import rpc
 
-RANDOM_NUMBER = random.randint(1, 100)
+async def hello(request):
+    client = await rpc.connect_rpc(connect='tcp://worker:5555')
 
-
-def random(request):
-    return web.Response(text="Your random number: {n}".format(n=RANDOM_NUMBER))
+    sentence = await client.call.make_a_sentence('Hello', 'world')
+    return web.Response(text=sentence)
 
 
 app = web.Application()
-app.router.add_route('GET', '/', random)
-
-web.run_app(app, port=8080)
+app.router.add_route('GET', '/', hello)
+web.run_app(app)
