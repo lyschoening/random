@@ -2,8 +2,8 @@ FROM python:3.5-alpine
 
 RUN pip install aiohttp
 
-ADD . app.py
+ADD app.py .
 
 EXPOSE 8080
 
-ENTRYPOINT python ./app.py
+ENTRYPOINT python app.py
