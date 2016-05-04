@@ -1,6 +1,6 @@
-FROM python:3.5-alpine
+FROM python:3.5
 
-RUN pip install aiohttp
+RUN pip install aiohttp aiozmq msgpack-python
 
 ADD app.py .
 
