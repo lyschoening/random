@@ -4,6 +4,6 @@ RUN pip install aiohttp
 
 ADD app.py .
 
-ENTRYPOINT python app.py
+ENTRYPOINT python ./app.py
 
 EXPOSE 8080
